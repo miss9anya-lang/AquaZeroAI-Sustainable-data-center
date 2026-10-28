@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AquaZero AI</title>
+<style>
+:root{--bg:#F4F6F5;--card:#fff;--fg:#1e2d3a;--mut:#5a6b78;--bd:#d9e0e0;--navy:#142B3B;--teal:#287D78;--amb:#b7791f;--red:#b83232;--ok:#287D78;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1c26;--card:#142B3B;--fg:#e8eeee;--mut:#9db0bb;--bd:#27414f;--teal:#4fb3ac;--amb:#e0a84a;--red:#e57373}}
+:root[data-theme="dark"]{--bg:#0e1c26;--card:#142B3B;--fg:#e8eeee;--mut:#9db0bb;--bd:#27414f;--teal:#4fb3ac;--amb:#e0a84a;--red:#e57373}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI","Noto Sans Devanagari",sans-serif}
+header{position:sticky;top:env(safe-area-inset-top,0px);background:var(--navy);color:#fff;z-index:5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--navy);z-index:10}
+.bar{max-width:1100px;margin:auto;display:flex;align-items:center;gap:8px;padding:8px 14px;flex-wrap:wrap}
+.logo{font-weight:700;font-size:18px;margin-right:auto}.logo span{color:#7fd0c9}
+nav{display:flex;gap:2px;flex-wrap:wrap}
+nav button,.ctl{background:transparent;border:0;color:#fff;padding:10px 12px;min-height:44px;border-radius:8px;font:inherit;font-size:14px;cursor:pointer}
+nav button[aria-current=true]{background:var(--teal)}nav button:hover,.ctl:hover{background:rgba(255,255,255,.14)}
+select.ctl{background:#1d3a4d}.menu{display:none}
+@media(max-width:760px){.menu{display:block}nav{display:none;width:100%;flex-direction:column}nav.open{display:flex}}
+:focus-visible{outline:3px solid #e0a84a;outline-offset:2px}
+main{max-width:1100px;margin:auto;padding:20px 14px 60px}
+h1{font-size:clamp(26px,5vw,40px);line-height:1.2;margin:.2em 0}h2{margin-top:1.4em}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.btn{background:var(--teal);color:#fff;border:0;border-radius:8px;padding:12px 18px;min-height:44px;font:inherit;font-weight:600;cursor:pointer}
+.btn.alt{background:transparent;color:var(--teal);border:1px solid var(--teal)}.btn:disabled{opacity:.5}
+.mut{color:var(--mut)}.badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700;border:1px solid}
+.demo{color:var(--amb);border-color:var(--amb)}.live{color:var(--ok);border-color:var(--ok)}
+.kpi{font-size:28px;font-weight:700}.kpi small{font-size:13px;font-weight:400;color:var(--mut)}
+label{display:block;font-size:14px;margin:10px 0 4px}
+input,select,textarea{width:100%;padding:11px;min-height:44px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--fg);font:inherit}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.row>*{flex:1 1 150px}
+.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);white-space:nowrap}
+.err{color:var(--red);font-size:13px}.alert{border-left:4px solid var(--amb);padding:8px 12px;margin:6px 0;background:var(--bg);border-radius:6px}.alert.crit{border-color:var(--red)}
+svg text{fill:var(--mut);font-size:11px}
+</style></head><body>
+<header><div class="bar">
+<div class="logo">Aqua<span>Zero</span> AI</div>
+<button class="ctl menu" id="menuBtn" aria-expanded="false" aria-controls="nav" data-i="menu"></button>
+<nav id="nav"></nav>
+<select class="ctl" id="lang" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="mr">मराठी</option></select>
+<button class="ctl" id="theme" aria-label="Theme">◐</button>
+</div></header>
+<main id="app" tabindex="-1"></main>
+<script>
+const T={en:{menu:"☰ Menu",home:"Home",problem:"Problem",solution:"Solution",dash:"Dashboard",impact:"Impact",contact:"Contact",
+h1:"Cut data-center cooling water, safely.",lead:"AquaZero AI recommends closed-loop liquid cooling and dry heat rejection settings that reduce evaporative water use while protecting thermal safety and energy efficiency.",
+cta1:"Open dashboard",cta2:"Calculate WUE",mission:"Mission",missionT:"Help operators measure water use honestly, test cooling strategies with human approval, and reduce evaporation without risking hardware.",
+p1:"Heat is the issue",p1t:"AI servers turn nearly all electrical power into heat. Many sites remove it with evaporative cooling towers, which consume water as vapor.",
+p2:"Why it matters",p2t:"Water use depends on site design and climate. Always check measured figures; cite your own utility or audited data rather than generic claims.",
+s1:"Closed-loop liquid cooling",s1t:"Coolant circulates through cold plates; heat moves to a sealed loop instead of open evaporation.",s2:"Dry heat rejection",s2t:"Dry coolers use air, trading water for extra fan energy, especially in hot weather.",s3:"AI control (advisory)",s3t:"A transparent rule-based model suggests pump and fan changes. Humans approve. No equipment is controlled automatically.",s4:"Limitations",s4t:"Dry cooling can raise energy use in hot climates. Savings need a documented baseline. Independent hardware safety controls remain mandatory.",
+mon:"Monitoring",demoNote:"DEMO MODE: simulated, reproducible data (seed 42). Not live measurements.",range:"Time range",dev:"Device",metric:"Metric",all:"All devices",limit:"Outlet temp limit (°C)",
+inlet:"Inlet temp",outlet:"Outlet temp",gpu:"GPU load",flow:"Coolant flow",kw:"Cooling energy",water:"Water (estimated)",
+export:"Export CSV",alerts:"Alerts",noAlerts:"No active alerts.",recs:"Recommendations (need human approval)",approve:"Approve",reject:"Reject",audit:"Audit log",noAudit:"No decisions yet.",
+lastSeen:"Last seen",status:"Status",online:"Online",offline:"Offline",live:"Live updates on",pause:"Pause",resume:"Resume",
+r1:"Increase pump speed by 10% (outlet near limit)",r2:"Raise dry-cooler fan speed by 15%",r3:"Hold settings; within safe band",r4:"Reduce pump speed by 5% to save energy",
+wue:"WUE calculator",wueIn:"Annual site water (litres)",wueIt:"Annual IT energy (kWh)",wueOut:"WUE (L/kWh)",wueNote:"WUE = annual site water use ÷ annual IT energy. Define the measurement boundary. Savings only count against a documented baseline over comparable periods.",
+base:"Baseline WUE",res:"Result",imp:"Measured reduction vs baseline",
+cname:"Name",cmail:"Email",cmsg:"Message",send:"Send",req:"This field is required",bad:"Enter a valid email",short:"Message must be at least 10 characters",
+ok:"Message saved. Thank you.",fail:"Could not save your message. Sign-in or storage is unavailable here.",
+sim:"Simulated",units:"Units",none:"Nothing to show for this filter."},
+hi:{menu:"☰ मेनू",home:"होम",problem:"समस्या",solution:"समाधान",dash:"डैशबोर्ड",impact:"प्रभाव",contact:"संपर्क",
+h1:"डेटा-सेंटर कूलिंग में पानी घटाएँ, सुरक्षित तरीके से।",lead:"AquaZero AI क्लोज़्ड-लूप लिक्विड कूलिंग और ड्राई हीट रिजेक्शन की सलाह देता है ताकि वाष्पीकरण से पानी का उपयोग घटे और तापीय सुरक्षा व ऊर्जा दक्षता बनी रहे।",
+cta1:"डैशबोर्ड खोलें",cta2:"WUE निकालें",mission:"मिशन",missionT:"ऑपरेटरों को पानी का उपयोग ईमानदारी से मापने और मानव अनुमोदन के साथ कूलिंग रणनीतियाँ परखने में मदद करना।",
+p1:"समस्या गर्मी है",p1t:"AI सर्वर लगभग सारी बिजली को गर्मी में बदलते हैं। कई साइट वाष्पीकरणीय कूलिंग टावर इस्तेमाल करती हैं, जिनमें पानी भाप बनकर उड़ता है।",
+p2:"यह क्यों मायने रखता है",p2t:"पानी का उपयोग साइट डिज़ाइन और जलवायु पर निर्भर है। सामान्य दावों के बजाय अपने मापे हुए आँकड़े देखें।",
+s1:"क्लोज़्ड-लूप लिक्विड कूलिंग",s1t:"कोल्ड प्लेट से कूलेंट बहता है और गर्मी बंद लूप में जाती है, खुले वाष्पीकरण में नहीं।",s2:"ड्राई हीट रिजेक्शन",s2t:"ड्राई कूलर हवा का उपयोग करते हैं; पानी की जगह पंखों की ऊर्जा लगती है।",s3:"AI नियंत्रण (सलाहकार)",s3t:"नियम-आधारित मॉडल पंप और पंखे में बदलाव सुझाता है। मंज़ूरी इंसान देता है। उपकरण अपने आप नियंत्रित नहीं होते।",s4:"सीमाएँ",s4t:"गर्म जलवायु में ड्राई कूलिंग से ऊर्जा बढ़ सकती है। बचत के लिए दर्ज बेसलाइन ज़रूरी है। स्वतंत्र हार्डवेयर सुरक्षा अनिवार्य है।",
+mon:"मॉनिटरिंग",demoNote:"डेमो मोड: नकली, दोहराने योग्य डेटा (seed 42)। यह लाइव माप नहीं है।",range:"समय सीमा",dev:"डिवाइस",metric:"मापदंड",all:"सभी डिवाइस",limit:"आउटलेट तापमान सीमा (°C)",
+inlet:"इनलेट तापमान",outlet:"आउटलेट तापमान",gpu:"GPU लोड",flow:"कूलेंट प्रवाह",kw:"कूलिंग ऊर्जा",water:"पानी (अनुमानित)",
+export:"CSV निर्यात",alerts:"अलर्ट",noAlerts:"कोई सक्रिय अलर्ट नहीं।",recs:"सुझाव (मानव अनुमोदन आवश्यक)",approve:"स्वीकार",reject:"अस्वीकार",audit:"ऑडिट लॉग",noAudit:"अभी कोई निर्णय नहीं।",
+lastSeen:"अंतिम बार देखा",status:"स्थिति",online:"ऑनलाइन",offline:"ऑफ़लाइन",live:"लाइव अपडेट चालू",pause:"रोकें",resume:"चालू करें",
+r1:"पंप की गति 10% बढ़ाएँ (आउटलेट सीमा के पास)",r2:"ड्राई-कूलर पंखे की गति 15% बढ़ाएँ",r3:"सेटिंग्स यथावत रखें; सुरक्षित दायरे में",r4:"ऊर्जा बचाने के लिए पंप की गति 5% घटाएँ",
+wue:"WUE कैलकुलेटर",wueIn:"वार्षिक साइट पानी (लीटर)",wueIt:"वार्षिक IT ऊर्जा (kWh)",wueOut:"WUE (L/kWh)",wueNote:"WUE = वार्षिक साइट जल उपयोग ÷ वार्षिक IT ऊर्जा। माप की सीमा तय करें। बचत केवल दर्ज बेसलाइन से तुलनीय अवधि में गिनी जाती है।",
+base:"बेसलाइन WUE",res:"परिणाम",imp:"बेसलाइन की तुलना में मापी गई कमी",
+cname:"नाम",cmail:"ईमेल",cmsg:"संदेश",send:"भेजें",req:"यह फ़ील्ड आवश्यक है",bad:"मान्य ईमेल दर्ज करें",short:"संदेश कम से कम 10 अक्षर का हो",
+ok:"संदेश सहेजा गया। धन्यवाद।",fail:"संदेश सहेजा नहीं जा सका। यहाँ साइन-इन या स्टोरेज उपलब्ध नहीं है।",sim:"नकली",units:"इकाइयाँ",none:"इस फ़िल्टर के लिए कुछ नहीं।"},
+mr:{menu:"☰ मेनू",home:"मुख्यपृष्ठ",problem:"समस्या",solution:"उपाय",dash:"डॅशबोर्ड",impact:"परिणाम",contact:"संपर्क",
+h1:"डेटा-सेंटर कूलिंगमधील पाणी कमी करा, सुरक्षितपणे.",lead:"AquaZero AI क्लोज्ड-लूप लिक्विड कूलिंग आणि ड्राय हीट रिजेक्शनची शिफारस करते, ज्यामुळे बाष्पीभवनाने होणारा पाण्याचा वापर कमी होतो आणि औष्णिक सुरक्षा व ऊर्जा कार्यक्षमता राखली जाते.",
+cta1:"डॅशबोर्ड उघडा",cta2:"WUE काढा",mission:"ध्येय",missionT:"ऑपरेटरना पाण्याचा वापर प्रामाणिकपणे मोजण्यास आणि मानवी मंजुरीसह कूलिंग धोरणे तपासण्यास मदत करणे.",
+p1:"समस्या उष्णतेची आहे",p1t:"AI सर्व्हर जवळजवळ सर्व वीज उष्णतेत बदलतात. अनेक साइट्स बाष्पीभवन कूलिंग टॉवर वापरतात, ज्यात पाणी वाफ होऊन उडते.",
+p2:"हे का महत्त्वाचे",p2t:"पाण्याचा वापर साइटची रचना व हवामानावर अवलंबून असतो. सर्वसाधारण दाव्यांपेक्षा तुमची मोजलेली आकडेवारी पहा.",
+s1:"क्लोज्ड-लूप लिक्विड कूलिंग",s1t:"कोल्ड प्लेटमधून कूलंट फिरतो आणि उष्णता बंद लूपमध्ये जाते, उघड्या बाष्पीभवनात नाही.",s2:"ड्राय हीट रिजेक्शन",s2t:"ड्राय कूलर हवा वापरतात; पाण्याऐवजी पंख्यांची ऊर्जा लागते.",s3:"AI नियंत्रण (सल्लागार)",s3t:"नियमाधारित मॉडेल पंप व पंख्यात बदल सुचवते. मंजुरी माणूस देतो. उपकरणे आपोआप नियंत्रित होत नाहीत.",s4:"मर्यादा",s4t:"उष्ण हवामानात ड्राय कूलिंगमुळे ऊर्जा वाढू शकते. बचतीसाठी नोंदवलेली बेसलाइन हवी. स्वतंत्र हार्डवेअर सुरक्षा अनिवार्य आहे.",
+mon:"मॉनिटरिंग",demoNote:"डेमो मोड: बनावट, पुन्हा तयार करता येणारा डेटा (seed 42). हे थेट मोजमाप नाही.",range:"कालावधी",dev:"डिव्हाइस",metric:"मापदंड",all:"सर्व डिव्हाइस",limit:"आउटलेट तापमान मर्यादा (°C)",
+inlet:"इनलेट तापमान",outlet:"आउटलेट तापमान",gpu:"GPU लोड",flow:"कूलंट प्रवाह",kw:"कूलिंग ऊर्जा",water:"पाणी (अंदाजित)",
+export:"CSV निर्यात",alerts:"सूचना",noAlerts:"कोणतीही सक्रिय सूचना नाही.",recs:"शिफारसी (मानवी मंजुरी आवश्यक)",approve:"मंजूर",reject:"नाकारा",audit:"ऑडिट लॉग",noAudit:"अजून निर्णय नाहीत.",
+lastSeen:"शेवटचे दिसले",status:"स्थिती",online:"ऑनलाइन",offline:"ऑफलाइन",live:"थेट अपडेट सुरू",pause:"थांबवा",resume:"सुरू करा",
+r1:"पंपाचा वेग 10% वाढवा (आउटलेट मर्यादेजवळ)",r2:"ड्राय-कूलर पंख्याचा वेग 15% वाढवा",r3:"सेटिंग्ज तशाच ठेवा; सुरक्षित मर्यादेत",r4:"ऊर्जा वाचवण्यासाठी पंपाचा वेग 5% कमी करा",
+wue:"WUE कॅल्क्युलेटर",wueIn:"वार्षिक साइट पाणी (लिटर)",wueIt:"वार्षिक IT ऊर्जा (kWh)",wueOut:"WUE (L/kWh)",wueNote:"WUE = वार्षिक साइट पाणी वापर ÷ वार्षिक IT ऊर्जा. मोजमापाची सीमा निश्चित करा. बचत फक्त नोंदवलेल्या बेसलाइनशी तुलनीय कालावधीत मोजली जाते.",
+base:"बेसलाइन WUE",res:"निकाल",imp:"बेसलाइनच्या तुलनेत मोजलेली घट",
+cname:"नाव",cmail:"ईमेल",cmsg:"संदेश",send:"पाठवा",req:"हे फील्ड आवश्यक आहे",bad:"वैध ईमेल टाका",short:"संदेश किमान 10 अक्षरांचा असावा",
+ok:"संदेश जतन झाला. धन्यवाद.",fail:"संदेश जतन करता आला नाही. येथे साइन-इन किंवा स्टोरेज उपलब्ध नाही.",sim:"बनावट",units:"एकके",none:"या फिल्टरसाठी काही नाही."}};
+const tabs=["home","problem","solution","dash","impact","contact"];
+const S={lang:"en",tab:"home",range:6,dev:"all",metric:"outlet",limit:45,live:true,audit:[],wueIn:"",wueIt:"",base:"",hist:[],t0:0,tick:0};
+try{S.lang=localStorage.getItem("az_lang")||S.lang}catch(e){}
+const t=k=>T[S.lang][k]||T.en[k]||k;
+const nf=(v,d=1)=>new Intl.NumberFormat(S.lang+"-IN",{maximumFractionDigits:d}).format(v);
+const df=ms=>new Intl.DateTimeFormat(S.lang+"-IN",{dateStyle:"short",timeStyle:"medium"}).format(ms);
+const $=s=>document.querySelector(s);
+const M={inlet:["°C",18],outlet:["°C",30],gpu:["%",0],flow:["L/min",0],kw:["kW",0],water:["L/h",0]};
+const DEV=["rack-A1","rack-B2"];
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
+function point(d,i){const r=rng(42+i*7+d*1000),h=(i/12)%24;const g=55+25*Math.sin((h-6)/24*6.283)+r()*10+d*6;
+ const inl=24+g*.04+r(),out=inl+4+g*.12+r()*1.5,fl=40+g*.2,kw=3+g*.05+r()*.3;return{gpu:g,inlet:inl,outlet:out,flow:fl,kw:kw,water:g*.05+r()*.5}}
+function build(){const now=Date.now();S.t0=now-288*300000;S.hist=[];for(let i=0;i<288;i++)DEV.forEach((d,j)=>S.hist.push({dev:d,ts:S.t0+i*300000,...point(j,i)}));S.tick=288}
+function addTick(){const now=Date.now();DEV.forEach((d,j)=>S.hist.push({dev:d,ts:now,...point(j,S.tick)}));S.tick++;if(S.hist.length>1600)S.hist.splice(0,2)}
+function rows(){const since=Date.now()-S.range*3600000;return S.hist.filter(r=>r.ts>=since&&(S.dev==="all"||r.dev===S.dev))}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function chart(rs,m){if(!rs.length)return`<p class="mut">${t("none")}</p>`;const W=700,H=220,p=34;
+ const by={};rs.forEach(r=>(by[r.dev]=by[r.dev]||[]).push(r));const vals=rs.map(r=>r[m]);let lo=Math.min(...vals),hi=Math.max(...vals);if(hi-lo<1){hi=lo+1}
+ const x=ts=>p+(ts-rs[0].ts)/Math.max(1,rs[rs.length-1].ts-rs[0].ts)*(W-p-8),y=v=>H-24-(v-lo)/(hi-lo)*(H-44);
+ const col=["#287D78","#b7791f"];let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${t(m)} (${M[m][0]})"><text x="4" y="14">${M[m][0]}</text>`;
+ [0,.5,1].forEach(f=>{const v=lo+(hi-lo)*f;s+=`<line x1="${p}" x2="${W-8}" y1="${y(v)}" y2="${y(v)}" stroke="var(--bd)"/><text x="2" y="${y(v)+4}">${nf(v,0)}</text>`});
+ if(m==="outlet"&&S.limit>=lo&&S.limit<=hi)s+=`<line x1="${p}" x2="${W-8}" y1="${y(S.limit)}" y2="${y(S.limit)}" stroke="var(--red)" stroke-dasharray="5 4"/>`;
+ Object.keys(by).forEach((d,i)=>{s+=`<polyline fill="none" stroke="${col[i%2]}" stroke-width="2" points="${by[d].map(r=>x(r.ts)+","+y(r[m])).join(" ")}"/>`;s+=`<text x="${p+8+i*90}" y="${H-4}" style="fill:${col[i%2]}">● ${d}</text>`});
+ return s+"</svg>"}
+function latest(d){const a=S.hist.filter(r=>r.dev===d);return a[a.length-1]}
+function recs(){const out=[];DEV.forEach(d=>{const r=latest(d);if(r.outlet>S.limit-3)out.push([d,"r1"]);else if(r.outlet>S.limit-8)out.push([d,"r2"]);else if(r.outlet<S.limit-16)out.push([d,"r4"]);else out.push([d,"r3"])});return out}
+function viewHome(){return`<h1>${t("h1")}</h1><p class="mut" style="max-width:720px">${t("lead")}</p><p><button class="btn" data-go="dash">${t("cta1")}</button> <button class="btn alt" data-go="impact">${t("cta2")}</button></p>
+<h2>${t("mission")}</h2><div class="card">${t("missionT")}</div>
+<div class="grid" style="margin-top:14px">${["s1","s2","s3"].map(k=>`<div class="card"><b>${t(k)}</b><p class="mut">${t(k+"t")}</p></div>`).join("")}</div>`}
+const viewProblem=()=>`<h1>${t("problem")}</h1><div class="grid"><div class="card"><b>${t("p1")}</b><p class="mut">${t("p1t")}</p></div><div class="card"><b>${t("p2")}</b><p class="mut">${t("p2t")}</p></div></div>`;
+const viewSolution=()=>`<h1>${t("solution")}</h1><div class="grid">${["s1","s2","s3","s4"].map(k=>`<div class="card"><b>${t(k)}</b><p class="mut">${t(k+"t")}</p></div>`).join("")}</div>`;
+function viewDash(){const rs=rows();const al=[];DEV.forEach(d=>{const r=latest(d);if(r.outlet>S.limit)al.push(`<div class="alert crit">${d}: ${t("outlet")} ${nf(r.outlet)} °C &gt; ${S.limit} °C</div>`)});
+ const kp=(S.dev==="all"?DEV:[S.dev]).map(d=>{const r=latest(d);return`<div class="card"><b>${d}</b> <span class="badge demo">${t("sim")}</span><div class="mut" style="font-size:13px">${t("status")}: ${t("online")} · ${t("lastSeen")}: ${df(Date.now())}</div><div class="grid" style="margin-top:8px;gap:8px">${Object.keys(M).map(k=>`<div><div class="mut" style="font-size:12px">${t(k)}</div><div class="kpi">${nf(r[k])} <small>${M[k][0]}</small></div></div>`).join("")}</div></div>`}).join("");
+ const last=rs.slice(-12).reverse();
+ return`<h1>${t("mon")}</h1><p><span class="badge demo">DEMO</span> <span class="mut">${t("demoNote")}</span></p>
+<div class="card"><div class="row"><div><label for="fr">${t("range")}</label><select id="fr">${[1,6,24].map(h=>`<option value="${h}"${h==S.range?" selected":""}>${h} h</option>`).join("")}</select></div>
+<div><label for="fd">${t("dev")}</label><select id="fd"><option value="all">${t("all")}</option>${DEV.map(d=>`<option${d===S.dev?" selected":""}>${d}</option>`).join("")}</select></div>
+<div><label for="fm">${t("metric")}</label><select id="fm">${Object.keys(M).map(k=>`<option value="${k}"${k===S.metric?" selected":""}>${t(k)} (${M[k][0]})</option>`).join("")}</select></div>
+<div><label for="fl">${t("limit")}</label><input id="fl" type="number" min="30" max="60" value="${S.limit}"></div></div>
+<p><button class="btn alt" id="lv">${S.live?t("pause"):t("resume")}</button> <button class="btn" id="ex">${t("export")}</button> <span class="badge ${S.live?"live":"demo"}">${S.live?"● "+t("live"):"❚❚"}</span></p></div>
+<div class="grid" style="margin-top:14px">${kp}</div>
+<div class="card" style="margin-top:14px">${chart(rs,S.metric)}</div>
+<h2>${t("alerts")}</h2>${al.join("")||`<p class="mut">${t("noAlerts")}</p>`}
+<h2>${t("recs")}</h2><div id="recs">${recs().map((r,i)=>`<div class="card" style="margin-bottom:8px"><b>${r[0]}</b>: ${t(r[1])}<div style="margin-top:8px"><button class="btn" data-a="${i}" data-v="1">${t("approve")}</button> <button class="btn alt" data-a="${i}" data-v="0">${t("reject")}</button></div></div>`).join("")}</div>
+<p class="mut" style="font-size:13px">Rule-based baseline v0.1 · ${df(Date.now())}</p>
+<h2>${t("audit")}</h2>${S.audit.map(a=>`<div class="alert">${df(a.ts)} · ${a.d} · ${a.v?t("approve"):t("reject")} · ${a.txt}</div>`).join("")||`<p class="mut">${t("noAudit")}</p>`}
+<h2>${t("mon")}</h2><div class="card scroll"><table><tr><th>Time</th><th>${t("dev")}</th>${Object.keys(M).map(k=>`<th>${t(k)} (${M[k][0]})</th>`).join("")}</tr>${last.map(r=>`<tr><td>${df(r.ts)}</td><td>${r.dev}</td>${Object.keys(M).map(k=>`<td>${nf(r[k])}</td>`).join("")}</tr>`).join("")}</table></div>`}
+function viewImpact(){const w=+S.wueIn,e=+S.wueIt,b=+S.base;const wue=w>0&&e>0?w/e:null;
+ return`<h1>${t("impact")}</h1><div class="card"><h2 style="margin-top:0">${t("wue")}</h2><div class="row"><div><label for="wi">${t("wueIn")}</label><input id="wi" type="number" min="0" value="${esc(S.wueIn)}"></div><div><label for="we">${t("wueIt")}</label><input id="we" type="number" min="0" value="${esc(S.wueIt)}"></div><div><label for="wb">${t("base")} (L/kWh)</label><input id="wb" type="number" min="0" step="0.01" value="${esc(S.base)}"></div></div>
+<p class="kpi" id="wo" aria-live="polite">${wue?`${t("wueOut")}: ${nf(wue,3)}`:"—"}${wue&&b>0?`<br><small>${t("imp")}: ${nf((b-wue)/b*100)} %</small>`:""}</p><p class="mut">${t("wueNote")}</p></div>`}
+const viewContact=()=>`<h1>${t("contact")}</h1><form class="card" id="cf" novalidate style="max-width:560px"><label for="cn">${t("cname")}</label><input id="cn" maxlength="80"><div class="err" id="en"></div><label for="cm">${t("cmail")}</label><input id="cm" type="email" maxlength="120"><div class="err" id="em"></div><label for="cg">${t("cmsg")}</label><textarea id="cg" rows="5" maxlength="2000"></textarea><div class="err" id="eg"></div><p><button class="btn" type="submit">${t("send")}</button></p><div id="cs" role="status"></div></form>`;
+function render(){document.documentElement.lang=S.lang;$("#lang").value=S.lang;$("#menuBtn").textContent=t("menu");
+ $("#nav").innerHTML=tabs.map(k=>`<button data-go="${k}" aria-current="${k===S.tab}">${t(k)}</button>`).join("");
+ const v={home:viewHome,problem:viewProblem,solution:viewSolution,dash:viewDash,impact:viewImpact,contact:viewContact}[S.tab];
+ const a=document.activeElement&&document.activeElement.id;$("#app").innerHTML=v();if(a){const el=document.getElementById(a);if(el){el.focus();try{el.setSelectionRange(el.value.length,el.value.length)}catch(e){}}}bind()}
+function go(k){S.tab=k;$("#nav").classList.remove("open");$("#menuBtn").setAttribute("aria-expanded","false");render();$("#app").focus();scrollTo(0,0)}
+function bind(){document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+ const on=(i,f)=>{const e=document.getElementById(i);if(e)e.onchange=()=>{f(e.value);render()}};
+ on("fr",v=>S.range=+v);on("fd",v=>S.dev=v);on("fm",v=>S.metric=v);on("fl",v=>S.limit=Math.min(60,Math.max(30,+v||45)));
+ const lv=$("#lv");if(lv)lv.onclick=()=>{S.live=!S.live;render()};
+ const ex=$("#ex");if(ex)ex.onclick=exportCsv;
+ document.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{const r=recs()[+b.dataset.a];S.audit.unshift({ts:Date.now(),d:r[0],v:+b.dataset.v,txt:t(r[1])});render()});
+ [["wi","wueIn"],["we","wueIt"],["wb","base"]].forEach(([i,k])=>{const e=document.getElementById(i);if(e)e.oninput=()=>{S[k]=e.value;const w=+S.wueIn,x=+S.wueIt,b=+S.base,u=w>0&&x>0?w/x:null;$("#wo").innerHTML=u?`${t("wueOut")}: ${nf(u,3)}${b>0?`<br><small>${t("imp")}: ${nf((b-u)/b*100)} %</small>`:""}`:"—"}});
+ const cf=$("#cf");if(cf)cf.onsubmit=submit}
+async function exportCsv(){const rs=rows();if(!rs.length)return;const head="timestamp,device,mode,"+Object.keys(M).map(k=>k+"_"+M[k][0]).join(",");
+ const csv=[head,...rs.map(r=>[new Date(r.ts).toISOString(),r.dev,"DEMO",...Object.keys(M).map(k=>r[k].toFixed(2))].join(","))].join("\n");
+ try{const d=await claude.use("downloads");if(d){await d.save({filename:"aquazero-demo-readings.csv",data:csv});return}}catch(e){}
+ const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="aquazero-demo-readings.csv";a.click()}
+async function submit(e){e.preventDefault();const n=$("#cn").value.trim(),m=$("#cm").value.trim(),g=$("#cg").value.trim();let bad=false;
+ $("#en").textContent=n?"":(bad=true,t("req"));$("#em").textContent=!m?(bad=true,t("req")):!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)?(bad=true,t("bad")):"";$("#eg").textContent=!g?(bad=true,t("req")):g.length<10?(bad=true,t("short")):"";
+ if(bad)return;const st=$("#cs");try{const r=await fetch("/api/contact",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:n,email:m,message:g,lang:S.lang})});if(!r.ok)throw 0;st.innerHTML=`<p class="live badge">${t("ok")}</p>`;$("#cf").reset()}catch(x){st.innerHTML=`<p class="err">${t("fail")}</p>`}}
+$("#lang").onchange=e=>{S.lang=e.target.value;try{localStorage.setItem("az_lang",S.lang)}catch(x){}render()};
+$("#theme").onclick=()=>{const cur=document.documentElement.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");const n=cur==="dark"?"light":"dark";document.documentElement.dataset.theme=n;try{localStorage.setItem("az_theme",n)}catch(x){}};
+try{const th=localStorage.getItem("az_theme");if(th)document.documentElement.dataset.theme=th}catch(e){}
+$("#menuBtn").onclick=()=>{const o=$("#nav").classList.toggle("open");$("#menuBtn").setAttribute("aria-expanded",o)};
+build();render();
+setInterval(()=>{if(S.live&&S.tab==="dash"&&!document.activeElement.matches("input,select")){addTick();render()}},4000);
+</script></body></html>

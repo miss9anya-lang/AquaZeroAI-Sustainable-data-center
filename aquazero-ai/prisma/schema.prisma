@@ -1,0 +1,51 @@
+generator client { provider = "prisma-client-js" }
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model Device {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  keyHash   String
+  lastSeen  DateTime?
+  readings  Reading[]
+  createdAt DateTime  @default(now())
+}
+model Reading {
+  id            String   @id @default(cuid())
+  deviceId      String
+  device        Device   @relation(fields: [deviceId], references: [id])
+  ts            DateTime
+  isDemo        Boolean  @default(false)
+  inletC        Float?
+  outletC       Float?
+  serverC       Float?
+  gpuPct        Float?
+  flowLpm       Float?
+  coolingKw     Float?
+  waterL        Float?
+  waterMeasured Boolean  @default(true)
+  @@index([deviceId, ts])
+}
+model Alert {
+  id       String   @id @default(cuid())
+  deviceId String
+  ts       DateTime @default(now())
+  level    String
+  message  String
+}
+model Audit {
+  id     String   @id @default(cuid())
+  ts     DateTime @default(now())
+  actor  String
+  action String
+  detail String?
+}
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  lang      String   @default("en")
+  createdAt DateTime @default(now())
+}
